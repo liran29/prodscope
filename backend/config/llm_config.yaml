@@ -1,0 +1,183 @@
+# =============================================================================
+# LLM Configuration for ProdScope 
+# This file is committed to repository and defines model capabilities and task assignments
+# API keys are stored separately in .env file (not committed)
+# =============================================================================
+
+# Provider definitions (model capabilities and characteristics)
+providers:
+  google:
+    api_key_env: "GOOGLE_API_KEY"
+    base_url: null
+    models:
+      gemini-1.5-pro:
+        description: "High-quality reasoning for complex analysis"
+        max_tokens: 8192
+        temperature: 0.7
+        cost_per_1k_tokens: 0.0025
+        strengths: ["reasoning", "analysis", "multilingual"]
+        weaknesses: ["speed", "cost"]
+        use_cases: ["deep_analysis", "complex_reasoning", "report_generation"]
+      
+      gemini-1.5-flash:
+        description: "Fast processing for simple tasks"
+        max_tokens: 8192
+        temperature: 0.3
+        cost_per_1k_tokens: 0.0005
+        strengths: ["speed", "cost", "efficiency"]
+        weaknesses: ["complex_reasoning"]
+        use_cases: ["text_processing", "keyword_extraction", "quick_analysis"]
+
+  openai:
+    api_key_env: "OPENAI_API_KEY"
+    base_url: null
+    models:
+      gpt-4o:
+        description: "Highest quality reasoning model"
+        max_tokens: 128000
+        temperature: 0.7
+        cost_per_1k_tokens: 0.005
+        strengths: ["reasoning", "accuracy", "consistency"]
+        weaknesses: ["cost", "speed"]
+        use_cases: ["critical_analysis", "final_review", "complex_tasks"]
+      
+      gpt-4o-mini:
+        description: "Balanced quality and cost"
+        max_tokens: 128000
+        temperature: 0.5
+        cost_per_1k_tokens: 0.00015
+        strengths: ["cost_effective", "versatile", "fast"]
+        weaknesses: ["complex_reasoning"]
+        use_cases: ["text_processing", "sentiment_analysis", "classification"]
+
+  anthropic:
+    api_key_env: "ANTHROPIC_API_KEY"
+    base_url: null
+    models:
+      claude-3-5-sonnet-20241022:
+        description: "Excellent for writing and detailed analysis"
+        max_tokens: 200000
+        temperature: 0.7
+        cost_per_1k_tokens: 0.003
+        strengths: ["writing", "analysis", "safety", "nuance"]
+        weaknesses: ["cost", "availability"]
+        use_cases: ["report_writing", "content_generation", "detailed_analysis"]
+
+  xai:
+    api_key_env: "XAI_API_KEY"
+    base_url: "https://api.x.ai/v1"
+    models:
+      grok-4:
+        description: "Creative analysis with real-time insights"
+        max_tokens: 131072
+        temperature: 0.8
+        cost_per_1k_tokens: 0.005
+        strengths: ["creativity", "real_time", "humor", "context"]
+        weaknesses: ["consistency", "formal_analysis"]
+        use_cases: ["creative_analysis", "trend_prediction", "market_insights"]
+
+# Task-specific LLM assignments
+task_assignments:
+  # Data Analysis Tasks
+  trend_analysis:
+    primary: 
+      provider: "google"
+      model: "gemini-1.5-pro"
+    fallback:
+      provider: "openai"
+      model: "gpt-4o"
+  
+  pain_point_analysis:
+    primary:
+      provider: "anthropic"
+      model: "claude-3-5-sonnet-20241022"
+    fallback:
+      provider: "google"
+      model: "gemini-1.5-pro"
+  
+  opportunity_identification:
+    primary:
+      provider: "xai"
+      model: "grok-4"
+    fallback:
+      provider: "google"
+      model: "gemini-1.5-pro"
+
+  # Text Processing Tasks
+  sentiment_analysis:
+    primary:
+      provider: "openai"
+      model: "gpt-4o-mini"
+    fallback:
+      provider: "google"
+      model: "gemini-1.5-flash"
+  
+  keyword_extraction:
+    primary:
+      provider: "google"
+      model: "gemini-1.5-flash"
+    fallback:
+      provider: "openai"
+      model: "gpt-3.5-turbo"
+  
+  text_classification:
+    primary:
+      provider: "openai"
+      model: "gpt-4o-mini"
+    fallback:
+      provider: "google"
+      model: "gemini-1.5-flash"
+
+  # Report Generation Tasks
+  executive_summary:
+    primary:
+      provider: "anthropic"
+      model: "claude-3-5-sonnet-20241022"
+    fallback:
+      provider: "openai"
+      model: "gpt-4o"
+  
+  detailed_report:
+    primary:
+      provider: "google"
+      model: "gemini-1.5-pro"
+    fallback:
+      provider: "anthropic"
+      model: "claude-3-5-sonnet-20241022"
+  
+  product_recommendations:
+    primary:
+      provider: "xai"
+      model: "grok-4"
+    fallback:
+      provider: "google"
+      model: "gemini-1.5-pro"
+
+# Global settings
+settings:
+  retry_attempts: 3
+  timeout_seconds: 60
+  fallback_enabled: true
+  cost_tracking: true
+  max_monthly_cost: 100  # USD
+  
+  # Rate limiting
+  rate_limits:
+    google: 60  # requests per minute
+    openai: 60
+    anthropic: 50
+    xai: 30
+
+# Development/Testing overrides
+development:
+  # Use cheaper models for testing
+  override_all_to:
+    provider: "google"
+    model: "gemini-1.5-flash"
+  
+  # Reduced rate limits for testing
+  rate_limits:
+    google: 10
+    openai: 10
+    anthropic: 10
+    xai: 10

@@ -1,0 +1,125 @@
+# =============================================================================
+# Task-specific LLM assignments for ProdScope
+# This file can be customized for different environments/requirements
+# =============================================================================
+
+# Production configuration - optimized for quality and cost balance
+production:
+  # Core Analysis Tasks
+  trend_analysis:
+    primary: { provider: "google", model: "gemini-1.5-pro" }
+    fallback: { provider: "openai", model: "gpt-4o" }
+    reasoning: "Complex trend analysis needs high-quality reasoning"
+  
+  pain_point_analysis:
+    primary: { provider: "anthropic", model: "claude-3-5-sonnet-20241022" }
+    fallback: { provider: "google", model: "gemini-1.5-pro" }
+    reasoning: "Claude excels at nuanced analysis of user feedback"
+  
+  opportunity_identification:
+    primary: { provider: "xai", model: "grok-beta" }
+    fallback: { provider: "google", model: "gemini-1.5-pro" }
+    reasoning: "Grok's creativity helps identify non-obvious opportunities"
+
+  # Text Processing Tasks
+  sentiment_analysis:
+    primary: { provider: "openai", model: "gpt-4o-mini" }
+    fallback: { provider: "google", model: "gemini-1.5-flash" }
+    reasoning: "Fast, accurate sentiment classification"
+  
+  keyword_extraction:
+    primary: { provider: "google", model: "gemini-1.5-flash" }
+    fallback: { provider: "openai", model: "gpt-4o-mini" }
+    reasoning: "Speed and cost-effectiveness for bulk processing"
+  
+  text_classification:
+    primary: { provider: "openai", model: "gpt-4o-mini" }
+    fallback: { provider: "google", model: "gemini-1.5-flash" }
+    reasoning: "Consistent classification performance"
+
+  # Report Generation Tasks
+  executive_summary:
+    primary: { provider: "anthropic", model: "claude-3-5-sonnet-20241022" }
+    fallback: { provider: "openai", model: "gpt-4o" }
+    reasoning: "High-quality business writing for executives"
+  
+  detailed_report:
+    primary: { provider: "google", model: "gemini-1.5-pro" }
+    fallback: { provider: "anthropic", model: "claude-3-5-sonnet-20241022" }
+    reasoning: "Good balance of quality and cost for long-form content"
+  
+  product_recommendations:
+    primary: { provider: "xai", model: "grok-beta" }
+    fallback: { provider: "google", model: "gemini-1.5-pro" }
+    reasoning: "Creative insights for innovative product concepts"
+
+# Development configuration - optimized for speed and cost
+development:
+  # Use faster, cheaper models for development/testing
+  trend_analysis:
+    primary: { provider: "google", model: "gemini-1.5-flash" }
+    fallback: { provider: "openai", model: "gpt-4o-mini" }
+  
+  pain_point_analysis:
+    primary: { provider: "google", model: "gemini-1.5-flash" }
+    fallback: { provider: "openai", model: "gpt-4o-mini" }
+  
+  opportunity_identification:
+    primary: { provider: "google", model: "gemini-1.5-flash" }
+    fallback: { provider: "openai", model: "gpt-4o-mini" }
+
+  sentiment_analysis:
+    primary: { provider: "google", model: "gemini-1.5-flash" }
+    fallback: { provider: "openai", model: "gpt-4o-mini" }
+  
+  keyword_extraction:
+    primary: { provider: "google", model: "gemini-1.5-flash" }
+    fallback: { provider: "openai", model: "gpt-4o-mini" }
+  
+  text_classification:
+    primary: { provider: "google", model: "gemini-1.5-flash" }
+    fallback: { provider: "openai", model: "gpt-4o-mini" }
+
+  executive_summary:
+    primary: { provider: "google", model: "gemini-1.5-flash" }
+    fallback: { provider: "openai", model: "gpt-4o-mini" }
+  
+  detailed_report:
+    primary: { provider: "google", model: "gemini-1.5-flash" }
+    fallback: { provider: "openai", model: "gpt-4o-mini" }
+  
+  product_recommendations:
+    primary: { provider: "google", model: "gemini-1.5-flash" }
+    fallback: { provider: "openai", model: "gpt-4o-mini" }
+
+# Budget-conscious configuration - minimize costs
+budget:
+  # Use only the cheapest models
+  _default: { provider: "google", model: "gemini-1.5-flash" }
+  _fallback: { provider: "openai", model: "gpt-4o-mini" }
+
+# High-quality configuration - best available models regardless of cost
+premium:
+  trend_analysis:
+    primary: { provider: "openai", model: "gpt-4o" }
+    fallback: { provider: "anthropic", model: "claude-3-5-sonnet-20241022" }
+  
+  pain_point_analysis:
+    primary: { provider: "anthropic", model: "claude-3-5-sonnet-20241022" }
+    fallback: { provider: "openai", model: "gpt-4o" }
+  
+  opportunity_identification:
+    primary: { provider: "openai", model: "gpt-4o" }
+    fallback: { provider: "xai", model: "grok-beta" }
+
+  executive_summary:
+    primary: { provider: "anthropic", model: "claude-3-5-sonnet-20241022" }
+    fallback: { provider: "openai", model: "gpt-4o" }
+  
+  detailed_report:
+    primary: { provider: "anthropic", model: "claude-3-5-sonnet-20241022" }
+    fallback: { provider: "openai", model: "gpt-4o" }
+  
+  product_recommendations:
+    primary: { provider: "openai", model: "gpt-4o" }
+    fallback: { provider: "anthropic", model: "claude-3-5-sonnet-20241022" }
