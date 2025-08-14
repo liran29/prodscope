@@ -87,6 +87,7 @@ Thumbs.db
 backend/.env
 *.key
 *.pem
+backend/config/google_credentials.json
 config/google_credentials.json
 
 # Logs
