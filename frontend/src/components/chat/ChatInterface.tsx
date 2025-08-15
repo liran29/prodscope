@@ -20,7 +20,7 @@ const INITIAL_MESSAGES: ChatMessage[] = [
   {
     id: '1',
     type: 'system',
-    content: '欢迎使用 ProdScope 产品分析系统！我可以帮助您分析产品数据、识别市场趋势、发现商业机会。您可以问我关于产品分析、市场洞察或竞争分析的任何问题。',
+    content: '欢迎使用 Prodscope 产品推荐系统！我可以帮助您分析产品数据、识别市场趋势、发现商业机会。您可以问我关于产品分析、市场洞察或竞争分析的任何问题。',
     timestamp: new Date(Date.now() - 60000),
   },
   {
@@ -44,7 +44,7 @@ const SUGGESTED_PROMPTS = [
 ]
 
 interface ChatInterfaceProps {
-  onSendMessage?: (message: string) => void
+  onSendMessage?: (message: string) => Promise<any>
   isAnalysisRunning?: boolean
   className?: string
 }
@@ -83,26 +83,43 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     setInputMessage('')
     setIsTyping(true)
 
-    // 调用外部回调
-    onSendMessage?.(userMessage.content)
-
-    // 模拟AI回复
-    setTimeout(() => {
-      const assistantMessage: ChatMessage = {
+    try {
+      // 调用真实的API
+      if (onSendMessage) {
+        const apiResponse = await onSendMessage(userMessage.content)
+        
+        const assistantMessage: ChatMessage = {
+          id: (Date.now() + 1).toString(),
+          type: 'assistant',
+          content: apiResponse.response,
+          timestamp: new Date(apiResponse.timestamp),
+          status: 'sent',
+          metadata: {
+            llmProvider: apiResponse.llm_provider,
+            processingTime: Math.round(apiResponse.processing_time * 1000),
+            dataSourcesUsed: apiResponse.data_sources_used || []
+          }
+        }
+        setMessages(prev => [...prev, assistantMessage])
+      }
+    } catch (error) {
+      console.error('Error getting response:', error)
+      const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
-        content: generateMockResponse(userMessage.content),
+        content: '抱歉，处理您的请求时出现了错误。请稍后再试。',
         timestamp: new Date(),
-        status: 'sent',
+        status: 'error',
         metadata: {
-          llmProvider: 'Claude',
-          processingTime: Math.round(1500 + Math.random() * 2000),
-          dataSourcesUsed: ['MindsDB', 'Vertex AI']
+          llmProvider: 'Error',
+          processingTime: 0,
+          dataSourcesUsed: []
         }
       }
-      setMessages(prev => [...prev, assistantMessage])
+      setMessages(prev => [...prev, errorMessage])
+    } finally {
       setIsTyping(false)
-    }, 2000 + Math.random() * 3000)
+    }
   }
 
   const generateMockResponse = (userInput: string): string => {
@@ -157,16 +174,16 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       </CardHeader>
       <CardContent>
         {/* 消息历史区域 */}
-        <div className="h-80 overflow-y-auto mb-4 space-y-3 p-3 border border-border rounded-lg bg-background">
+        <div className="h-[600px] overflow-y-auto mb-4 space-y-4 p-4 border border-border rounded-lg bg-background">
           {messages.map((message) => (
             <div
               key={message.id}
               className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div
-                className={`max-w-[80%] p-3 rounded-lg ${getMessageTypeColor(message.type)}`}
+                className={`max-w-[85%] p-4 rounded-lg ${getMessageTypeColor(message.type)}`}
               >
-                <div className="text-sm whitespace-pre-wrap">{message.content}</div>
+                <div className="text-sm whitespace-pre-wrap leading-relaxed">{message.content}</div>
                 <div className="flex items-center justify-between mt-2 text-xs opacity-70">
                   <span>{message.timestamp.toLocaleTimeString()}</span>
                   {message.metadata && (
@@ -211,16 +228,19 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           <div ref={messagesEndRef} />
         </div>
 
-        {/* 建议提示 */}
-        {messages.length <= 2 && (
-          <div className="mb-4">
-            <p className="text-sm text-muted-foreground mb-2">推荐问题:</p>
-            <div className="space-y-2">
+        {/* 建议提示 - 在对话完成后或初始状态时显示 */}
+        {(!isTyping && !isAnalysisRunning) && (
+          <div className="mb-3">
+            <p className="text-xs text-muted-foreground mb-2">
+              {messages.some(msg => msg.type === 'user') ? '继续提问:' : '推荐问题:'}
+            </p>
+            <div className="flex flex-wrap gap-1.5">
               {SUGGESTED_PROMPTS.map((prompt, index) => (
                 <button
                   key={index}
                   onClick={() => handleSuggestedPrompt(prompt)}
-                  className="w-full text-left p-2 text-sm bg-accent hover:bg-accent/80 rounded border transition-colors"
+                  className="inline-flex items-center px-2.5 py-1.5 text-xs bg-accent hover:bg-accent/80 rounded-lg border transition-colors whitespace-nowrap"
+                  disabled={isTyping || isAnalysisRunning}
                 >
                   {prompt}
                 </button>
@@ -237,7 +257,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="请输入您的问题或分析需求..."
-            className="flex-1 min-h-[80px] p-3 border border-border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+            className="flex-1 min-h-[100px] p-3 border border-border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             disabled={isTyping}
           />
           <div className="flex flex-col gap-2">
@@ -245,7 +265,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               onClick={handleSendMessage}
               disabled={!inputMessage.trim() || isTyping}
               size="sm"
-              className="h-[40px]"
+              className="h-[50px] px-6"
             >
               发送
             </Button>
@@ -253,7 +273,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               variant="outline"
               size="sm"
               onClick={() => setInputMessage('')}
-              className="h-[40px]"
+              className="h-[50px] px-6"
             >
               清空
             </Button>

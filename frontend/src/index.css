@@ -60,42 +60,13 @@ body {
   background-color: hsl(var(--background));
 }
 
-.three-column-layout {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
+/* Simple centered layout for chat-only interface */
+.chat-centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 8rem);
   padding: 1.5rem;
-}
-
-@media (min-width: 1024px) {
-  .three-column-layout {
-    grid-template-columns: repeat(6, 1fr);
-  }
-}
-
-.workflow-panel {
-  grid-column: span 1;
-}
-
-.insights-panel {
-  grid-column: span 3;
-}
-
-.interaction-panel {
-  grid-column: span 2;
-}
-
-@media (max-width: 1023px) {
-  .workflow-panel,
-  .insights-panel,
-  .interaction-panel {
-    grid-column: span 1;
-  }
-}
-
-.insight-card {
-  margin-bottom: 1rem;
-  transition: all 0.2s;
 }
 
 .insight-card:hover {

@@ -1,31 +1,82 @@
-# Core dependencies for prodscope
-requests>=2.31.0
-pandas>=2.0.0
-numpy>=1.24.0
+# Prodscope - 产品推荐系统完整依赖
+# 统一管理所有前端、后端、分析依赖
 
-# LangChain & LangGraph
-langchain>=0.1.0
-langchain-core>=0.3.68
-langgraph>=0.2.0
+# ============== Core Dependencies ==============
+requests>=2.32.0
+pandas>=2.2.3
+numpy>=2..2.3
+python-dotenv>=1.1.0
 
-# LLM integrations
+# ============== FastAPI Backend ==============
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+pydantic>=2.11.0
+httpx>=0.28.1
+aiofiles>=24.0.0
+python-multipart>=0.0.10
+structlog>=24.0.0
+
+# ============== LangChain & LangGraph (Latest) ==============
+langchain>=0.3.27
+langchain-core>=0.3.74
+langgraph>=0.6.5
+
+# ============== LLM Integrations (Compatible Versions) ==============
 langchain-google-genai>=2.1.9
 langchain-openai>=0.3.30
-google-genai>=0.8.0  # For native Gemini search capabilities
+langchain-anthropic>=0.3.18
+google-genai>=1.30.0
 
-# Google Cloud Vertex AI (Global access solution)
-google-cloud-aiplatform>=1.45.0
-google-auth>=2.23.0
-google-auth-oauthlib>=1.1.0
+# ============== Google Cloud Services ==============
+google-cloud-aiplatform>=1.75.0
+google-auth>=2.37.0
+google-auth-oauthlib>=1.2.0
 google-auth-httplib2>=0.2.0
 
-# For data analysis
-scikit-learn>=1.3.0
+# ============== Data Sources ==============
+# PyTrends for Google Trends
+pytrends>=4.9.0
 
-# For report generation
+# MindsDB connection
+# mindsdb-sdk>=1.0.0  # 如果需要官方SDK
+
+# ============== Data Analysis & Visualization ==============
+scikit-learn>=1.6.0
+matplotlib>=3.10.0
+seaborn>=0.13.0
+plotly>=5.24.0
+
+# ============== Async & WebSocket Support ==============
+websockets>=14.0
+asyncio-mqtt>=0.16.2  # 如果需要MQTT
+aioredis>=2.0.1  # 如果需要Redis缓存
+
+# ============== Report Generation ==============
 jinja2>=3.1.0
-markdown>=3.5.0
+markdown>=3.7.0
+fpdf2>=2.8.0  # PDF生成
+python-docx>=1.1.0  # Word文档生成
 
-# Development tools
-pytest>=7.4.0
-python-dotenv>=1.0.0
+# ============== Security & Environment ==============
+cryptography>=44.0.0
+pyjwt>=2.10.0
+passlib[bcrypt]>=1.7.4
+
+# ============== Development & Testing ==============
+pytest>=8.3.0
+pytest-asyncio>=0.25.0
+pytest-cov>=6.0.0
+black>=24.10.0
+isort>=5.13.0
+flake8>=7.1.0
+
+# ============== Monitoring & Logging ==============
+rich>=13.9.0  # 美化输出
+loguru>=0.7.0  # 更好的日志
+prometheus-client>=0.21.0  # 监控指标
+
+# ============== Optional: Advanced Features ==============
+# celery>=5.4.0  # 任务队列
+# redis>=5.2.0   # 缓存
+# postgresql-adapter>=1.0.0  # PostgreSQL
+# elasticsearch>=8.17.0  # 搜索引擎
